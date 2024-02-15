@@ -38,4 +38,4 @@ jobs:
         if: matrix.os == 'windows-latest'
         with:
           name: ${{ matrix.os }}
-          path: build/lib.win-amd64-cpython-311/decrypt.cp311-win_amd64.pyd
+          path: ./
