@@ -33,9 +33,6 @@ jobs:
       - name: Build python
         run: python setup.py build_ext --inplace
 
-      - name: Move
-        run: move decrypt.cp311-win_amd64.* ./cri_usm_demuxer/
-
       - name: Build usm
         run: cd cri_usm_demuxer && cl decrypt.c
 
