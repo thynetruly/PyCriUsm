@@ -23,7 +23,7 @@ def cleanup_cryptor():
 	crypt_cache[1].clear()
 
 
-def extract_usm(video_path, output, is_async: bool, **kwargs):
+def extract_usm(video_path, output, is_async: bool=False, **kwargs):
 	video_path = Path(video_path)
 	key_args = get_key(video_path)
 	return demux(video_path, output, *key_args, is_async, **kwargs)
@@ -82,7 +82,8 @@ def demux(video_path, output: Union[str, Path, SimpleQueue], key=0, audio_encryp
 					data = chunk_cache[1].pop(new_index, None)
 					if data is None:
 						break
-					fobj.write(data)
+					if fobj.write(data) != data.size:
+						breakpoint()
 					new_index += 1
 				chunk_cache[0] = new_index
 				if max_index is not None:
@@ -149,7 +150,8 @@ def demux(video_path, output: Union[str, Path, SimpleQueue], key=0, audio_encryp
 		logger.info(f'start decrypt {video_path}')
 		buffer = None
 		threads = ()
-		input_queue = SimpleQueue() if key else None
+		from queue import Queue
+		input_queue = Queue(1) if key else None
 		video_call = input_queue.put if key else output_queue.put
 		# TODO hca decrypt support
 		audio_call = input_queue.put if audio_encrypt and hca_encrypt==0 else output_queue.put
@@ -192,7 +194,7 @@ def demux(video_path, output: Union[str, Path, SimpleQueue], key=0, audio_encryp
 	else:
 		def wait():
 			from .util import coro_wait
-			return coro_wait()[1]
+			return coro_wait(read_coro, write_coro)[1]
 	read_coro = io_pool.submit(read_loop)
 	if isinstance(output, SimpleQueue) is False:
 		output = Path(output)
