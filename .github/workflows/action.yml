@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest]
-        python-version: ["3.11"]
+        python-version: ["3.12"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/setup-python@v5
@@ -33,8 +33,8 @@ jobs:
       - name: Build python
         run: python setup.py build_ext --inplace
 
-      - name: Build usm
-        run: cd cri_usm_demuxer && cl decrypt.c
+      # - name: Build usm
+      #   run: cd cri_usm_demuxer && cl decrypt.c
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
