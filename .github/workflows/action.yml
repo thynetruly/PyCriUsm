@@ -1,4 +1,4 @@
-name: windowstests
+name: executing
 
 on:
   push:
